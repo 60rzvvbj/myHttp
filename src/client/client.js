@@ -1,12 +1,15 @@
 const net = require("net");
-let count = 0;
+let url1 =  "192.168.43.160";
+let url2 = '127.0.0.1'
+let url3 = "192.168.43.205";
+// let count = 0;
 const client = net.createConnection(
-  { port: 8124, host: "192.168.0.167" },
+  { port: 1234, host: url3},
   () => {
     // 'connect' 监听器。
     console.log("connected to server!");
     let timer = setInterval(() => {
-      client.write("world!");
+      client.write("world!" + count);
       count++;
       if (count > 5) {
         clearInterval(timer);

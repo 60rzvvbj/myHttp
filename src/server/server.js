@@ -1,4 +1,5 @@
-const net = require("net");
+// const net = require("net");
+import net from 'net'
 const server = net.createServer((c) => {
   // 'connection' 监听器。
   console.log("client connected");
@@ -18,14 +19,14 @@ server.listen(8124, () => {
   console.log("server bound");
 });
 
-function express() {}
+// function express() {}
 
-let app = express();
+// let app = express();
 
-app.on("GET", (req, res) => {
-  let data = req.query;
-  console.log(data);
-  res.send("aaa");
-});
+// app.on("GET", (req, res) => {
+//   let data = req.query;
+//   console.log(data);
+//   res.send("aaa");
+// });
 
-app.listen(8848);
+// app.listen(8848);
