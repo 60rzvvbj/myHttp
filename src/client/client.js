@@ -6,6 +6,9 @@ function connect(options, data, callback) {
       client.write(data);
     }
   );
+  client.on("error", function (err) {
+    throw err;
+  });
   client.on("data", (resData) => {
     client.end();
     callback(undefined, resData.toString());
@@ -96,13 +99,15 @@ function request(options) {
 
 request({
   method: "GET",
-  url: "myhttp://192.168.0.168:1234/login",
+  url: "myhttp://192.168.0.111:8848/login",
   query: { account: "60rzvvbj", password: "123456" },
   body: "aoiughadipsugfasdbgfapisdvbgwedbf",
   success: (data) => {
+    console.log("请求成功");
     console.log(data);
   },
   error: (err) => {
+    console.log("请求失败");
     console.log(err);
   },
 });
