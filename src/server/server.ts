@@ -1,4 +1,4 @@
-import net from 'net';
+const net = require("net");
 
 enum Method {
   'GET' = 'GET',
@@ -9,12 +9,19 @@ interface ListenHandler {
   (): void
 }
 
+type IQuery = Record<string, string>
 interface Request {
-  query: Object
+  method: Method,
+  rawURL: string,
+  url: string,
+  version: string,
+  body: string,
+  path: string
+  query: IQuery
 }
 
 interface Send {
-  (data: String | Buffer): void
+  (data: string | Uint8Array): void
 }
 
 interface Response {
@@ -27,19 +34,32 @@ interface DataHandler {
 
 // type EventListeners = Array<DataHandler>;
 
-let str = `GET myhttp://192.168.43.205:1234/login?account=60rzvvbj&password=123456 1.0
-
-aoiughadipsugfasdbgfapisdvbgwedbf`;
-
-
-export function resolve(data: string): Request{
-
+function resolve(data: string): Request {
+  const [method, rawURL, version, body] = data.split(/\s/).filter(str => str.length !== 0);
+  const [url, queryStr] = rawURL.split('?');
+  const temp = url.slice(10); // 去除 myHttp://
+  const path = temp.slice(temp.indexOf('/'));
+  const queryPairs = queryStr.split('&');
+  const query:IQuery = {};
+  queryPairs.forEach(p => {
+    let [k, v] = p.split('=');
+    query[k] = v
+  });
+  return {
+    url,
+    rawURL,
+    version,
+    body,
+    path,
+    method: method.toLocaleUpperCase() as Method,
+    query
+  }
 }
 
 
-function express() {
+export default function express() {
 
-  const  eventMap: Map<string,  Map<Method, DataHandler>> = new Map();
+  const eventMap: Map<string, Map<Method, DataHandler>> = new Map();
 
 
   const server = net.createServer((c) => {
@@ -48,19 +68,22 @@ function express() {
     c.on("end", () => {
       console.log("client disconnected");
     });
-    c.on("data", (data) => {
+    c.on("data", (data: Buffer) => {
       const raw = data.toString(); // 为处理字符串
       const req = resolve(raw);
       const res: Response = {
-        send:(d) => {}
+        send: (d) => { console.log(d); c.write(d);
+         }
       };
       // 触发处理
-      eventMap.get('').get(Method.GET)(req, res);
+      console.log(eventMap.get(req.path));
+      console.log(eventMap.get(req.path)?.get(req.method));
+      eventMap.get(req.path)?.get(req.method)(req, res);
     });
   });
 
 
-  server.on("error", (err) => {
+  server.on("error", (err: Error) => {
     throw err;
   });
 
@@ -71,22 +94,12 @@ function express() {
     },
     // 注册 method 处理函数
     on: (method: Method, url: string, cb: DataHandler) => {
-      let map = eventMap.get(url) ?? new Map<Method, DataHandler>();
-      map.set(method, cb);
+      if(!eventMap.has(url)){
+        eventMap.set(url, new Map<Method, DataHandler>());
+      }
+      eventMap.get(url).set(method, cb);
     }
   };
 
   return app;
 }
-
-let app = express();
-
-app.on(Method.GET, '/login', (req, res) => {
-  let data = req.query;
-  console.log(data);
-  res.send("aaa");
-});
-
-app.listen(8848, () => {
-  console.log(`listen on 8848`);
-});
