@@ -1,47 +1,121 @@
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
 /* 0 */,
 /* 1 */
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-const net = __webpack_require__(2);
-let url1 = "192.168.43.196";
-let url2 = '127.0.0.1'
-let url3 = "192.168.43.205";
-let count = 0;
-const client = net.createConnection(
-  { port: 8848, host: url1 },
-  () => {
-    // 'connect' 监听器。
-    console.log("connected to server!");
-    client.write("GET myhttp://192.168.43.196:8848/login?account=60rzvvbj&password=123456 1.0\n\naoiughadipsugfasdbgfapisdvbgwedbf");
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ request)
+/* harmony export */ });
+/* harmony import */ var net__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var net__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(net__WEBPACK_IMPORTED_MODULE_0__);
+
+function connect(options, data, callback) {
+  let client = net__WEBPACK_IMPORTED_MODULE_0___default().createConnection(
+    { port: parseInt(options.port), host: options.host },
+    () => {
+      client.write(data);
+    }
+  );
+  client.on("error", function (err) {
+    throw err;
+  });
+  client.on("data", (resData) => {
+    client.end();
+    callback(undefined, resData.toString());
+  });
+}
+
+function XHR() {
+  let options = {
+    method: "",
+    url: "",
+    host: "",
+    port: "8848",
+    text: "",
+  };
+
+  let flag = 0; // 判断函数调用情况，防止非法调用
+
+  this.open = function (method, url) {
+    options.method = method;
+    options.url = url;
+
+    // url处理
+    options.text += options.method + " " + options.url + " 1.0";
+
+    // myhttp://host:port/path?a=1&b=2
+    let urlArr = url.substring(9).split(":");
+    if (urlArr.length == 1) {
+      options.host = urlArr[0];
+    } else if (urlArr.length == 2) {
+      options.host = urlArr[0];
+      options.port = urlArr[1].split("/")[0];
+    }
+  };
+
+  this.setHeader = function (headers) {
+    for (let attr in headers) {
+      options.text += "\n" + attr + "=" + headers[attr];
+    }
+  };
+
+  this.send = function (bodyData) {
+    if (bodyData != undefined) {
+      options.text += "\n\n";
+      options.text += bodyData;
+    }
+
+    connect(
+      {
+        host: options.host,
+        port: options.port,
+      },
+      options.text,
+      this.callback
+    );
+  };
+
+  this.callback = function () {};
+}
+
+function request(options) {
+  let defaultOptions = {
+    method: "GET",
+    url: "",
+  };
+  Object.assign(defaultOptions, options);
+
+  let xhr = new XHR();
+
+  if (defaultOptions.query) {
+    let queryArr = [];
+    for (let key in defaultOptions.query) {
+      queryArr.push(key + "=" + defaultOptions.query[key]);
+    }
+    defaultOptions.url += "?" + queryArr.join("&");
   }
-);
-client.on("data", (data) => {
-  console.log(data.toString());
-  client.end();
-});
-client.on("end", () => {
-  console.log("disconnected from server");
-});
 
-// function request(options) { }
+  xhr.open(defaultOptions.method, defaultOptions.url);
 
-// request({
-//   method: "GET",
-//   utl: "/aldas",
-//   query: {},
-//   body: "",
-//   success: (data) => { },
-//   error: (err) => { },
-// });
+  xhr.callback = function (err, resData) {
+    if (err) {
+      defaultOptions.error(err);
+    } else {
+      defaultOptions.success(resData);
+    }
+  };
+  xhr.send(defaultOptions.body);
+}
+
 
 
 /***/ }),
 /* 2 */
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("net");
 
 /***/ })
@@ -114,14 +188,26 @@ module.exports = require("net");
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _client_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _client_client__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_client_client__WEBPACK_IMPORTED_MODULE_0__);
 
-console.log('client');
+(0,_client_client__WEBPACK_IMPORTED_MODULE_0__["default"])({
+  method: "GET",
+  url: "myhttp://192.168.43.196:8848/login",
+  query: { account: "60rzvvbj", password: "123456" },
+  body: "aoiughadipsugfasdbgfapisdvbgwedbf",
+  success: (data) => {
+    console.log("请求成功");
+    console.log(data);
+  },
+  error: (err) => {
+    console.log("请求失败");
+    console.log(err);
+  },
+});
+
 })();
 
 /******/ })()
