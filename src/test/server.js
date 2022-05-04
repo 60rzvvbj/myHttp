@@ -1,8 +1,8 @@
-import server from './server/server'
+import server from "../server/server";
 
 let app = server();
 
-app.on('GET', '/login', (req, res) => {
+app.on("GET", "/login", (req, res) => {
   let data = req.query;
   console.log(data);
   res.send("aaa");

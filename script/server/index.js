@@ -130,7 +130,7 @@ __webpack_require__.r(__webpack_exports__);
 
 let app = (0,_server_server__WEBPACK_IMPORTED_MODULE_0__["default"])();
 
-app.on('GET', '/login', (req, res) => {
+app.on("GET", "/login", (req, res) => {
   let data = req.query;
   console.log(data);
   res.send("aaa");

@@ -28,7 +28,7 @@ function connect(options, data, callback) {
   });
 }
 
-function XHR() {
+function XmlMyHTTPRequest() {
   let options = {
     method: "",
     url: "",
@@ -88,7 +88,7 @@ function request(options) {
   };
   Object.assign(defaultOptions, options);
 
-  let xhr = new XHR();
+  let xmhr = new XmlMyHTTPRequest();
 
   if (defaultOptions.query) {
     let queryArr = [];
@@ -98,18 +98,17 @@ function request(options) {
     defaultOptions.url += "?" + queryArr.join("&");
   }
 
-  xhr.open(defaultOptions.method, defaultOptions.url);
+  xmhr.open(defaultOptions.method, defaultOptions.url);
 
-  xhr.callback = function (err, resData) {
+  xmhr.callback = function (err, resData) {
     if (err) {
       defaultOptions.error(err);
     } else {
       defaultOptions.success(resData);
     }
   };
-  xhr.send(defaultOptions.body);
+  xmhr.send(defaultOptions.body);
 }
-
 
 
 /***/ }),
@@ -195,7 +194,7 @@ __webpack_require__.r(__webpack_exports__);
 
 (0,_client_client__WEBPACK_IMPORTED_MODULE_0__["default"])({
   method: "GET",
-  url: "myhttp://192.168.43.196:8848/login",
+  url: "myhttp://127.0.0.1:8848/login",
   query: { account: "60rzvvbj", password: "123456" },
   body: "aoiughadipsugfasdbgfapisdvbgwedbf",
   success: (data) => {
