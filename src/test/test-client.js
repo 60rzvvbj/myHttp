@@ -1,3 +1,4 @@
+import fs from "fs";
 import net from "net";
 function connect(options, data, callback) {
   let client = net.createConnection(
@@ -97,17 +98,46 @@ function request(options) {
   xmhr.send(defaultOptions.body);
 }
 
-request({
-  method: "GET",
-  url: "myhttp://server.natappfree.cc:33938/login",
-  query: { account: "60rzvvbj", password: "123456" },
-  body: "aoiughadipsugfasdbgfapisdvbgwedbf",
-  success: (data) => {
-    console.log("请求成功");
-    console.log(data);
+// request({
+//   method: "GET",
+//   url: "myhttp://server.natappfree.cc:33938/login",
+//   query: { account: "60rzvvbj", password: "123456" },
+//   body: "aoiughadipsugfasdbgfapisdvbgwedbf",
+//   success: (data) => {
+//     console.log("请求成功");
+//     console.log(data);
+//   },
+//   error: (err) => {
+//     console.log("请求失败");
+//     console.log(err);
+//   },
+// });
+
+// function connect(options, data, callback) {
+//   let client = net.createConnection(
+//     { port: parseInt(options.port), host: options.host },
+//     () => {
+//       client.write(data);
+//     }
+//   );
+//   client.on("error", function (err) {
+//     throw err;
+//   });
+//   client.on("data", (resData) => {
+//     client.end();
+//     callback(undefined, resData.toString());
+//   });
+// }
+
+let fileData = fs.readFileSync("./test-client.js");
+console.log(fileData);
+connect(
+  {
+    port: 1234,
+    host: "127.0.0.1",
   },
-  error: (err) => {
-    console.log("请求失败");
-    console.log(err);
-  },
-});
+  fileData,
+  function () {
+    console.log("success");
+  }
+);
