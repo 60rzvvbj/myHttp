@@ -68,7 +68,7 @@ function XmlMyHTTPRequest() {
   this.callback = function () {};
 }
 
-function request(options) {
+export default function request(options) {
   let defaultOptions = {
     method: "GET",
     url: "",
@@ -96,18 +96,3 @@ function request(options) {
   };
   xmhr.send(defaultOptions.body);
 }
-
-request({
-  method: "GET",
-  url: "myhttp://server.natappfree.cc:33938/login",
-  query: { account: "60rzvvbj", password: "123456" },
-  body: "aoiughadipsugfasdbgfapisdvbgwedbf",
-  success: (data) => {
-    console.log("请求成功");
-    console.log(data);
-  },
-  error: (err) => {
-    console.log("请求失败");
-    console.log(err);
-  },
-});
