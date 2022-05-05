@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "webpack --config-name server && node ./script/server/index.js",
+    "server": "webpack --config-name server && nodemon ./script/server/index.js",
     "client": "webpack --config-name client && node ./script/client/index.js"
   },
   "author": "",
