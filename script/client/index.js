@@ -17,6 +17,7 @@ function connect(options, datas, callback) {
     { port: parseInt(options.port), host: options.host },
     () => {
       for (let data of datas) {
+        console.log(data);
         client.write(data);
       }
     }
@@ -37,7 +38,9 @@ function XmlMyHTTPRequest() {
     host: "",
     port: "8848",
     text: "",
-    headers: {},
+    headers: {
+      "content-type": "Default",
+    },
   };
 
   let flag = 0; // 判断函数调用情况，防止非法调用
@@ -61,9 +64,11 @@ function XmlMyHTTPRequest() {
 
   this.setHeader = function (headers) {
     options.headers = { ...options.headers, ...headers };
+    let hArr = [];
     for (let attr in headers) {
-      options.text += "\n" + attr + "=" + headers[attr];
+      hArr.push(attr + "=" + headers[attr]);
     }
+    options.text += "\n" + hArr.join("&");
   };
 
   this.send = function (bodyData) {
@@ -72,8 +77,7 @@ function XmlMyHTTPRequest() {
     if (options.headers["content-type"] == "File") {
       datas.push(bodyData);
     } else if (bodyData != undefined) {
-      datas[0] += "\n\n";
-      datas[0] += bodyData;
+      datas[0] += "\n" + bodyData;
     }
 
     connect(
@@ -98,10 +102,6 @@ function request(options) {
 
   let xmhr = new XmlMyHTTPRequest();
 
-  if (options.headers) {
-    xmhr.setHeader(options.headers);
-  }
-
   if (defaultOptions.query) {
     let queryArr = [];
     for (let key in defaultOptions.query) {
@@ -111,6 +111,10 @@ function request(options) {
   }
 
   xmhr.open(defaultOptions.method, defaultOptions.url);
+
+  if (options.headers) {
+    xmhr.setHeader(options.headers);
+  }
 
   xmhr.callback = function (err, resData) {
     if (err) {
@@ -208,7 +212,7 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _client_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _client_client_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_1__);
 
@@ -231,11 +235,15 @@ __webpack_require__.r(__webpack_exports__);
 
 let file = fs__WEBPACK_IMPORTED_MODULE_1___default().readFileSync("./src/test/client.js");
 
-(0,_client_client__WEBPACK_IMPORTED_MODULE_0__["default"])({
-  method: "LOAD",
-  url: "myhttp://127.0.0.1:8848/upload",
+(0,_client_client_js__WEBPACK_IMPORTED_MODULE_0__["default"])({
+  method: "GET",
+  url: "myhttp://127.0.0.1:8848/getUserInfo",
+  headers: {
+    token: "aaa",
+    cookie: "c",
+  },
   query: { account: "60rzvvbj" },
-  body: file,
+  body: "this is body",
   success: (data) => {
     console.log("请求成功");
     console.log(data);

@@ -1,4 +1,4 @@
-import request from "../client/client";
+import request from "../client/client.js";
 import fs from "fs";
 
 // request({
@@ -19,10 +19,14 @@ import fs from "fs";
 let file = fs.readFileSync("./src/test/client.js");
 
 request({
-  method: "LOAD",
-  url: "myhttp://127.0.0.1:8848/upload",
+  method: "GET",
+  url: "myhttp://127.0.0.1:8848/getUserInfo",
+  headers: {
+    token: "aaa",
+    cookie: "c",
+  },
   query: { account: "60rzvvbj" },
-  body: file,
+  body: "this is body",
   success: (data) => {
     console.log("请求成功");
     console.log(data);

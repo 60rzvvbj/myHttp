@@ -14,16 +14,14 @@ var Method;
     Method["POST"] = "POST";
 })(Method || (Method = {}));
 function resolve(data) {
-    var _a = data
-        .split(/\s/)
-        .filter(function (str) { return str.length !== 0; }), method = _a[0], rawURL = _a[1], version = _a[2], body = _a[3];
-    var _b = rawURL.split("?"), url = _b[0], queryStr = _b[1];
+    var _a = data.split(/\s/).filter(function (str) { return str.length !== 0; }), method = _a[0], rawURL = _a[1], version = _a[2], body = _a[3];
+    var _b = rawURL.split('?'), url = _b[0], queryStr = _b[1];
     var temp = url.slice(10);
-    var path = temp.slice(temp.indexOf("/"));
-    var queryPairs = queryStr.split("&");
+    var path = temp.slice(temp.indexOf('/'));
+    var queryPairs = queryStr.split('&');
     var query = {};
     queryPairs.forEach(function (p) {
-        var _a = p.split("="), k = _a[0], v = _a[1];
+        var _a = p.split('='), k = _a[0], v = _a[1];
         query[k] = v;
     });
     return {
@@ -33,7 +31,7 @@ function resolve(data) {
         body: body,
         path: path,
         method: method.toLocaleUpperCase(),
-        query: query,
+        query: query
     };
 }
 function express() {
@@ -46,13 +44,12 @@ function express() {
         c.on("data", function (data) {
             var _a, _b;
             var raw = data.toString();
-            console.log(raw);
             var req = resolve(raw);
             var res = {
                 send: function (d) {
                     console.log(d);
                     c.write(d);
-                },
+                }
             };
             console.log(eventMap.get(req.path));
             console.log((_a = eventMap.get(req.path)) === null || _a === void 0 ? void 0 : _a.get(req.method));
@@ -71,7 +68,7 @@ function express() {
                 eventMap.set(url, new Map());
             }
             eventMap.get(url).set(method, cb);
-        },
+        }
     };
     return app;
 }

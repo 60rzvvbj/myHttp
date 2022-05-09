@@ -4,6 +4,7 @@ function connect(options, datas, callback) {
     { port: parseInt(options.port), host: options.host },
     () => {
       for (let data of datas) {
+        console.log(data);
         client.write(data);
       }
     }
@@ -24,7 +25,9 @@ function XmlMyHTTPRequest() {
     host: "",
     port: "8848",
     text: "",
-    headers: {},
+    headers: {
+      "content-type": "Default",
+    },
   };
 
   let flag = 0; // 判断函数调用情况，防止非法调用
@@ -48,9 +51,11 @@ function XmlMyHTTPRequest() {
 
   this.setHeader = function (headers) {
     options.headers = { ...options.headers, ...headers };
+    let hArr = [];
     for (let attr in headers) {
-      options.text += "\n" + attr + "=" + headers[attr];
+      hArr.push(attr + "=" + headers[attr]);
     }
+    options.text += "\n" + hArr.join("&");
   };
 
   this.send = function (bodyData) {
@@ -59,8 +64,7 @@ function XmlMyHTTPRequest() {
     if (options.headers["content-type"] == "File") {
       datas.push(bodyData);
     } else if (bodyData != undefined) {
-      datas[0] += "\n\n";
-      datas[0] += bodyData;
+      datas[0] += "\n" + bodyData;
     }
 
     connect(
@@ -85,10 +89,6 @@ export default function request(options) {
 
   let xmhr = new XmlMyHTTPRequest();
 
-  if (options.headers) {
-    xmhr.setHeader(options.headers);
-  }
-
   if (defaultOptions.query) {
     let queryArr = [];
     for (let key in defaultOptions.query) {
@@ -98,6 +98,10 @@ export default function request(options) {
   }
 
   xmhr.open(defaultOptions.method, defaultOptions.url);
+
+  if (options.headers) {
+    xmhr.setHeader(options.headers);
+  }
 
   xmhr.callback = function (err, resData) {
     if (err) {
